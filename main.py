@@ -93,7 +93,7 @@ def getTickers(n):
     tickers = []
     cont = 1
     while cont <= n:
-        ticker = input("Ingrese el ticker #" +str(cont)+"a comparar:")
+        ticker = input("Ingrese el ticker #" +str(cont)+" a comparar:").upper()
         tickers.append(ticker)
         cont +=1
     return tickers
@@ -108,3 +108,4 @@ print(ticker1)
 print(ticker2)
 
 ### Anáisis de los datos
+
