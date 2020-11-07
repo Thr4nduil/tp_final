@@ -2,13 +2,7 @@ import os
 import pandas as pd
 import requests
 
-# Importador de archivos
-def wget(url):
-    #Función para importar archivos al entorno
-    r = requests.get(url, allow_redirects=True)
-    with open(url[url.rfind('/') + 1::], 'wb') as f:
-        f.write(r.content)
-
+### Set up
 #Data de archivos     
 data ={
     "AAPL":"https://raw.githubusercontent.com/scikit-learn/examples-data/master/financial-data/AAPL.csv",
@@ -67,22 +61,50 @@ data ={
     "XRX":"https://raw.githubusercontent.com/scikit-learn/examples-data/master/financial-data/XRX.csv",
     "YHOO":"https://raw.githubusercontent.com/scikit-learn/examples-data/master/financial-data/YHOO.csv"
 }      
-def printLista(data):
-    for ticker in data:
-        print(ticker)
-    return
 
-printLista(data)
-def getTicker(n):
+# Manipuladores de archivos
+def wget(url):
+    #Función para importar archivos al entorno
+    r = requests.get(url, allow_redirects=True)
+    with open(url[url.rfind('/') + 1::], 'wb') as f:
+        f.write(r.content)
+
+def getArchivo(data,txtTicker):
+    nombreArchivo = txtTicker+ ".csv"
+    if not os.path.exists( nombreArchivo ):
+        url = data[txtTicker]
+        wget(url)
+        
+    df = pd.read_csv(nombreArchivo)
+    return df
     
+#Muestra los Tickers posibles
+def printLista(data,txt):
+    print(txt +"\n")
+    for ticker in data:
+        print(ticker, end=" - ")
+    print("\n")
+
+printLista(data,"Lista de tickers a elegir:")
+
+# De entre toda la lista, selecciona los 2 a comparar y prepara todos los archivos para su análisis
+def getTickers(n):
+    #Genera una lista con la cantidad de tickers a analizar
     tickers = []
-    cont = 0
+    cont = 1
     while cont <= n:
-        ticker = input("Ingrese el ticker #" +str(cont+1)+"a comparar:")
+        ticker = input("Ingrese el ticker #" +str(cont)+"a comparar:")
         tickers.append(ticker)
         cont +=1
     return tickers
 
-tickers = getTicker(2)
-
+tickers = getTickers(2)
 print(tickers)
+
+ticker1 = getArchivo(data,tickers[0])
+ticker2 = getArchivo(data,tickers[1])
+
+print(ticker1)
+print(ticker2)
+
+### Anáisis de los datos
