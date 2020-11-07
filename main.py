@@ -88,17 +88,19 @@ def printLista(data,txt):
 printLista(data,"Lista de tickers a elegir:")
 
 # De entre toda la lista, selecciona los 2 a comparar y prepara todos los archivos para su análisis
-def getTickers(n):
+def getTickers(n,data):
     #Genera una lista con la cantidad de tickers a analizar
     tickers = []
     cont = 1
     while cont <= n:
         ticker = input("Ingrese el ticker #" +str(cont)+" a comparar:").upper()
+        while ticker not in data:
+            ticker = input("ERROR, Ticker no disponible, reingrese el ticker #" +str(cont)+" a comparar:").upper()
         tickers.append(ticker)
         cont +=1
     return tickers
 
-tickers = getTickers(2)
+tickers = getTickers(2,data)
 print(tickers)
 
 ticker1 = getArchivo(data,tickers[0])
