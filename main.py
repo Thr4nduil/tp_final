@@ -2,12 +2,14 @@ import os
 import pandas as pd
 import requests
 
+# Importador de archivos
 def wget(url):
     #Función para importar archivos al entorno
     r = requests.get(url, allow_redirects=True)
     with open(url[url.rfind('/') + 1::], 'wb') as f:
         f.write(r.content)
-        
+
+#Data de archivos     
 data ={
     "AAPL":"https://raw.githubusercontent.com/scikit-learn/examples-data/master/financial-data/AAPL.csv",
     "AIG":"https://raw.githubusercontent.com/scikit-learn/examples-data/master/financial-data/AIG.csv",
@@ -64,7 +66,13 @@ data ={
     "XOM":"https://raw.githubusercontent.com/scikit-learn/examples-data/master/financial-data/XOM.csv",
     "XRX":"https://raw.githubusercontent.com/scikit-learn/examples-data/master/financial-data/XRX.csv",
     "YHOO":"https://raw.githubusercontent.com/scikit-learn/examples-data/master/financial-data/YHOO.csv"
-}        
+}      
+def printLista(data):
+    for ticker in data:
+        print(ticker)
+    return
+
+printLista(data)
 def getTicker(n):
     
     tickers = []
