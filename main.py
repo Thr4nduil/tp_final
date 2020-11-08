@@ -111,3 +111,17 @@ print(ticker2)
 
 ### Anáisis de los datos
 
+#Derivadas discretas
+def diff(df):
+    df["aux"] = df["close"].shift(1)
+    df["aux"] = df["aux"].fillna(0)
+    df["diff"] = df["close"] - df["aux"]
+    df.pop("aux")
+    df["diff"][0]=0
+    return df
+
+ticker1 = diff(ticker1)
+ticker2 = diff(ticker2)
+
+print(ticker1)
+print(ticker2)
