@@ -75,3 +75,5 @@ ticker2 = f.diff(ticker2)
 
 print(ticker1)
 print(ticker2)
+
+f.grafico(ticker1,ticker2)

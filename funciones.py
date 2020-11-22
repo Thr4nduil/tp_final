@@ -110,3 +110,10 @@ def diff(df):
     df["diff"][0]=0
     return df
 
+# Grafico
+def grafico(ticker1,ticker2):
+    print('Fechas disponibles:\n    desde ' + ticker1['date'][0] + '\n    hasta ' + ticker1['date'][-1])
+    ini = input('Ingrese fecha desde la que desea ver el grafico (AAAA-MM-DD): ')
+    fin = input('Ingrese fecha hasta la que desea ver el grafico (AAAA-MM-DD): ')
+    
+    
