@@ -61,7 +61,7 @@ data ={
 
 f.printLista(data,"Lista de tickers a elegir:")
 
-f.tickers = getTickers(2,data)
+tickers = f.getTickers(2,data)
 print(tickers)
 
 ticker1 = f.getArchivo(data,tickers[0])
