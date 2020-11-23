@@ -112,8 +112,16 @@ def diff(df):
 
 # Grafico
 def grafico(ticker1,ticker2):
-    print('Fechas disponibles:\n    desde ' + ticker1['date'][0] + '\n    hasta ' + ticker1['date'][-1])
-    ini = input('Ingrese fecha desde la que desea ver el grafico (AAAA-MM-DD): ')
-    fin = input('Ingrese fecha hasta la que desea ver el grafico (AAAA-MM-DD): ')
+    
+    print('Fechas disponibles:\n    desde ' + str(ticker1['date'][0]) + '\n    hasta ' + str(ticker1['date'].iloc[-1]))
+    fechamin = pd.to_datetime(input('Ingrese fecha desde la que desea ver el grafico (AAAA-MM-DD): '))
+    fechamax = pd.to_datetime(input('Ingrese fecha hasta la que desea ver el grafico (AAAA-MM-DD): '))
+    
+    
+    ticker1_acotado = ticker1.loc[(ticker1["date"] > fechamin) & (ticker1["date"] < fechamax), :]
+    ticker2_acotado = ticker2.loc[(ticker1["date"] > fechamin) & (ticker2["date"] < fechamax), :]
+    
+    plt.plot(ticker1_acotado["date"],ticker1_acotado["diff"])
+    plt.plot(ticker2_acotado["date"],ticker2_acotado["diff"])
     
     

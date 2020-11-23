@@ -1,5 +1,7 @@
-
-import funciones as f
+import os
+import pandas as pd
+import requests
+import matplotlib.pyplot as plt
 
 data ={
     "AAPL":"https://raw.githubusercontent.com/scikit-learn/examples-data/master/financial-data/AAPL.csv",
@@ -59,21 +61,83 @@ data ={
     "YHOO":"https://raw.githubusercontent.com/scikit-learn/examples-data/master/financial-data/YHOO.csv"
 }   
 
-f.printLista(data,"Lista de tickers a elegir:")
+def wget(url):
+    #Función para importar archivos al entorno
+    r = requests.get(url, allow_redirects=True)
+    with open(url[url.rfind('/') + 1::], 'wb') as f:
+        f.write(r.content)
 
-tickers = f.getTickers(2,data)
+def getArchivo(data,txtTicker):
+    nombreArchivo = txtTicker+ ".csv"
+    if not os.path.exists( nombreArchivo ):
+        url = data[txtTicker]
+        wget(url)
+        
+    df = pd.read_csv(nombreArchivo)
+    #corrige fechas a formato fecha
+    df["date"] = pd.to_datetime(df["date"])
+    return df
+    
+#Muestra los Tickers posibles
+def printLista(data,txt):
+    print(txt +"\n")
+    for ticker in data:
+        print(ticker, end=" - ")
+    print("\n")
+
+# De entre toda la lista, selecciona los 2 a comparar y prepara todos los archivos para su análisis
+def getTickers(n,data):
+    #Genera una lista con la cantidad de tickers a analizar
+    tickers = []
+    cont = 1
+    while cont <= n:
+        ticker = input("Ingrese el ticker #" +str(cont)+" a comparar:").upper()
+        while ticker not in data:
+            ticker = input("ERROR, Ticker no disponible, reingrese el ticker #" + str(cont) +" a comparar:").upper()
+        tickers.append(ticker)
+        cont +=1
+    return tickers
+
+#Derivadas discretas
+def diff(df):
+    df["aux"] = df["close"].shift(1)
+    df["aux"] = df["aux"].fillna(0)
+    df["diff"] = df["close"] - df["aux"]
+    df.pop("aux")
+    df["diff"][0]=0
+    return df
+
+def grafico(tickers,ticker1,ticker2):
+    
+    print('Fechas disponibles:\n    desde ' + str(ticker1['date'][0]) + '\n    hasta ' + str(ticker1['date'].iloc[-1]))
+    fechamin = pd.to_datetime(input('Ingrese fecha desde la que desea ver el grafico (AAAA-MM-DD): '))
+    fechamax = pd.to_datetime(input('Ingrese fecha hasta la que desea ver el grafico (AAAA-MM-DD): '))
+    
+    
+    ticker1_acotado = ticker1.loc[(ticker1["date"] > fechamin) & (ticker1["date"] < fechamax), :]
+    ticker2_acotado = ticker2.loc[(ticker1["date"] > fechamin) & (ticker2["date"] < fechamax), :]
+    
+    plt.plot(ticker1_acotado["date"],ticker1_acotado["diff"],label=tickers[0])
+    plt.plot(ticker2_acotado["date"],ticker2_acotado["diff"],label=tickers[1])
+    plt.xticks(rotation=45)
+    plt.xlabel("Fecha")
+    plt.ylabel("Diferencia de cierres")
+    plt.grid(axis="both")
+    plt.legend()
+    plt.show()
+
+printLista(data,"Lista de tickers a elegir:")
+
+# Recupera los tickers a analizar
+tickers = getTickers(2,data)
 print(tickers)
 
-ticker1 = f.getArchivo(data,tickers[0])
-ticker2 = f.getArchivo(data,tickers[1])
+ticker1 = getArchivo(data,tickers[0])
+ticker2 = getArchivo(data,tickers[1])
 
-print(ticker1)
-print(ticker2)
+#Calcula las derivadas deiscretas de cada uno
+ticker1 = diff(ticker1)
+ticker2 = diff(ticker2)
 
-ticker1 = f.diff(ticker1)
-ticker2 = f.diff(ticker2)
-
-print(ticker1)
-print(ticker2)
-
-f.grafico(ticker1,ticker2)
+#Grafica entre las fechas la derivada     
+grafico(tickers,ticker1,ticker2)
